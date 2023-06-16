@@ -14,23 +14,28 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  # name of the deployment
   name: nagp-mysql
   labels:
     app: nagp
 spec:
+  # selector is mandatory in apiVersion apps/v1 and defines how to find the pods to manage
   selector:
     matchLabels:
       app: nagp
       tier: mysql
   strategy:
     type: Recreate
+  # template contains now the definition of the containers, volumes etc.
   template:
     metadata:
       labels:
         app: nagp
         tier: mysql
     spec:
+      # definition for the containers to be started in this POD
       containers:
+      # reference to the repository/tag of the image for the container
       - image: mysql:5.6
         name: mysql
         env:
@@ -40,6 +45,7 @@ spec:
               name: mysql-pass
               key: password
         ports:
+        # port that is exposed by the POD
         - containerPort: 3306
           name: mysql
         volumeMounts:
@@ -58,8 +64,9 @@ metadata:
     app: nagp
 spec:
   ports:
+    # port that is exposed for the service
     - port: 3306
   selector:
     app: nagp
     tier: mysql
-      # clusterIP: None
+  clusterIP: None

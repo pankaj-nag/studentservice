@@ -3,43 +3,36 @@ kind: ConfigMap
 metadata:
   name: studentservice-config
 data:
+  # communication (hostname) with DB pod instead of POD IPs
   DATABASE_SERVER: nagp-mysql.default.svc.cluster.local
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: studentservice
-  labels:
-    app: studentservice
-spec:
-  ports:
-    - port: 8080
-  selector:
-    app: studentservice
-    tier: frontend
-  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  # name of the deployment
   name: studentservice
   labels:
     app: studentservice
 spec:
+  # creates the replicaset to manage n pods 
   replicas: 4
+  # selector is mandatory in apiVersion apps/v1 and defines how to find the pods to manage
   selector:
     matchLabels:
       app: studentservice
       tier: frontend
   strategy:
     type: RollingUpdate
+  # template contains now the definition of the containers, volumes etc.
   template:
     metadata:
       labels:
         app: studentservice
         tier: frontend
     spec:
+      # definition for the containers to be started in this POD
       containers:
+      # reference to the repository/tag of the image for the container
       - image: pkjjava/studentservice:0.0.2-SNAPSHOT
         name: studentservice
         env:
@@ -51,7 +44,9 @@ spec:
         - name: DATABASE_USERNAME
           valueFrom:
             secretKeyRef:
+              # name must match a Secret defined in the cluster
               name: mysql-pass
+              # key must match a name in the Secret from which to get the value
               key: username
         - name: DATABASE_PASSWORD
           valueFrom:
@@ -59,5 +54,21 @@ spec:
               name: mysql-pass
               key: password
         ports:
+        # port that is exposed by the POD
         - containerPort: 8080
           name: studentservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: studentservice
+  labels:
+    app: studentservice
+spec:
+  ports:
+    # port that is exposed for the service
+    - port: 8080
+  selector:
+    app: studentservice
+    tier: frontend
+  type: LoadBalancer
