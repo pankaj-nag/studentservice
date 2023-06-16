@@ -32,7 +32,7 @@ spec:
       app: studentservice
       tier: frontend
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
