@@ -13,3 +13,6 @@ URL for Service API tier to view the records from backend tier:
 ### Create the secrets in kubernates cluster
 
 - kubectl create secret generic mysql-pass --from-literal=username=root --from-literal=password='P@ssw0rd1'
+
+### For Database AND Table
+Use the sql-script (students.sql) to create and insert the table in DB
