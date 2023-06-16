@@ -11,7 +11,7 @@ RUN mvn clean package
 FROM eclipse-temurin:11-jdk-alpine
 
 # copy only the artifacts we need from the first stage and discard the rest
-COPY --from=MAVEN_BUILD ./target/studentservice-0.0.1-SNAPSHOT.jar /app.jar
+COPY --from=MAVEN_BUILD ./target/studentservice-1.0.0-SNAPSHOT.jar /app.jar
 
 # set the startup command to execute the jar
 CMD ["java", "-jar", "/app.jar"]
